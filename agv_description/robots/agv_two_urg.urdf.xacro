@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<robot name="agv" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find agv_description)/urdf/body/body.urdf.xacro"/>
+  <xacro:include filename="$(find agv_description)/urdf/wheel/wheel.urdf.xacro"/>
+  <xacro:include filename="$(find agv_description)/urdf/caster/caster.urdf.xacro"/>
+  <xacro:include filename="$(find agv_description)/urdf/sensor/lrf1.urdf.xacro"/>
+  <xacro:include filename="$(find agv_description)/urdf/sensor/lrf2.urdf.xacro"/>
+
+  <!-- ===========  Link & Joint ============ -->
+  <link name="base_link"/>
+
+  <!-- Base -->
+  <xacro:base parent="base_link">
+    <origin xyz="0 0 0.05"/>
+  </xacro:base> 
+ 
+  <!-- Wheel -->
+  <xacro:wheel prefix="right" parent="body_link">
+    <origin xyz="0.115 -0.19 -0.014" rpy="1.57 0 0" />
+    <axis xyz="0 0 -1" />
+  </xacro:wheel>
+  
+  <xacro:wheel prefix="left" parent="body_link">
+    <origin xyz="0.115 0.19 -0.014" rpy="-1.57 0 0" />
+    <axis xyz="0 0 1" />
+  </xacro:wheel>
+
+  <!-- Caster -->
+  <xacro:caster parent="body_link">
+    <origin xyz="-0.12 0 -0.029"/>
+  </xacro:caster>
+  
+  <!-- Lidar -->
+  <xacro:lrf_sensor prefix="urg_lrf_link" parent="body_link">
+    <origin xyz="0.115 0.0 0.0637" rpy="0 0 0" />
+  </xacro:lrf_sensor>
+  
+  <xacro:lrf_sensor prefix="urg2_lrf2_link" parent="body_link">
+    <origin xyz="-0.115 0.0 0.0637" rpy="0 0 3.14159265359" />
+  </xacro:lrf_sensor>
+
+  <!-- ===========  Transmission ============ -->
+  <xacro:wheel_trans prefix="right" interface="hardware_interface/VelocityJointInterface" />
+  <xacro:wheel_trans prefix="left" interface="hardware_interface/VelocityJointInterface" />
+
+  <!-- =============== Gazebo =============== -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/agv</robotNamespace>
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+  <!-- Base -->
+  <xacro:base_gazebo/>
+  <!-- Wheel --> 
+
+  <xacro:wheel_gazebo prefix="right" />
+  <xacro:wheel_gazebo prefix="left" />
+  <!-- Caster -->
+
+  <xacro:caster_gazebo/>
+
+  <!-- Lidar -->
+  <xacro:lrf_gazebo prefix="urg" base_rad="0" rad_range="4.71" min_range="0.10" max_range="30.0" />
+  <xacro:lrf2_gazebo prefix="urg2" base_rad="0" rad_range="4.71" min_range="0.10" max_range="30.0" />
+
+</robot>

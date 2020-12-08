@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot name="agv" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find agv_description)/urdf/body/body.urdf.xacro"/>
+  <xacro:include filename="$(find agv_description)/urdf/wheel/wheel.urdf.xacro"/>
+  <xacro:include filename="$(find agv_description)/urdf/caster/caster.urdf.xacro"/>
+  <link name="base_footprint"/>
+
+  <xacro:base parent="base_footprint">
+    <origin xyz="0 0 0.05"/>
+  </xacro:base> 
+
+  <xacro:wheel prefix="right" parent="base_link">
+    <origin xyz="0.115 -0.19 -0.015" rpy="1.57 0 0" />
+    <axis xyz="0 0 -1" />
+  </xacro:wheel>
+
+  <xacro:wheel prefix="left" parent="base_link">
+    <origin xyz="0.115 0.19 -0.015" rpy="-1.57 0 0" />
+    <axis xyz="0 0 1" />
+  </xacro:wheel>
+
+  <xacro:caster parent="base_link">
+    <origin xyz="-0.13 0 -0.03"/>
+  </xacro:caster>
+  
+  <!-- ===========  Transmission ============ -->
+  <xacro:wheel_trans prefix="right" interface="hardware_interface/VelocityJointInterface" />
+  <xacro:wheel_trans prefix="left" interface="hardware_interface/VelocityJointInterface" />
+
+  <!-- =============== Gazebo =============== -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/agv</robotNamespace>
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+  <xacro:base_gazebo/>
+  <xacro:wheel_gazebo prefix="right" />
+  <xacro:wheel_gazebo prefix="left" />
+  <xacro:caster_gazebo/>
+</robot>
